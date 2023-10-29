@@ -1,5 +1,6 @@
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextCharacter;
+import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
@@ -13,8 +14,8 @@ import static com.googlecode.lanterna.input.KeyType.*;
 
 public class Game {
     public Screen screen;
-    private Hero hero;
-    private boolean running = true;
+    private Arena arena;
+    public boolean running = true;
     public Game() {
         try {
             TerminalSize terminalSize = new TerminalSize(40, 20);
@@ -24,19 +25,16 @@ public class Game {
             screen.setCursorPosition(null);
             screen.startScreen();
             screen.doResizeIfNecessary();
-            hero = new Hero(10,10);
+            arena = new Arena(40,20, screen);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    private void draw() {
-        try {
-            screen.clear();
-            hero.draw(screen);
-            screen.refresh();
-        } catch (IOException e){
-            e.printStackTrace();
-        }
+    private void draw() throws IOException{
+        TextGraphics textGraphics = screen.newTextGraphics();
+        screen.clear();
+        arena.draw(textGraphics);
+        screen.refresh();
     }
 
     public void run() throws IOException {
@@ -48,30 +46,9 @@ public class Game {
     }
 
     private void processKey(KeyStroke key) throws IOException{
-        switch (key.getKeyType()){
-            case ArrowUp:
-                moveHero(hero.moveUp());
-                break;
-            case ArrowDown:
-                moveHero(hero.moveDown());
-                break;
-            case ArrowLeft:
-                moveHero(hero.moveLeft());
-                break;
-            case ArrowRight:
-                moveHero(hero.moveRight());
-                break;
-            case EOF:
-                running = false;
-                break;
-            default:
-                if(key.getCharacter() == 'q'){
-                    screen.close();
-                }
+        arena.processKey(key);
+        if(key.getCharacter() != null && key.getCharacter() == 'q'){
+            running = false;
         }
     }
-    private void moveHero(Position position){
-        hero.setPosition(position);
-    }
-
 }
