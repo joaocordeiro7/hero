@@ -20,7 +20,7 @@ public class Arena {
         this.width = width;
         this.height = height;
         this.screen = screen;
-        hero = new Hero(10,10);
+        hero = new Hero(10,5);
         this.walls = createWalls();
     }
 
@@ -56,10 +56,15 @@ public class Arena {
                 }
         }
     }
-    private boolean canHeroMove(Position position){
-        int newX = position.getX();
-        int newY = position.getY();
-        return newX >= 0 && newX < width && newY >= 0 && newY < height;
+    private boolean canHeroMove(Position position) {
+
+        for (Wall wall : walls) {
+            if (wall.getPosition().equals(position)) {
+                return false;
+            }
+        }
+
+        return position.getX() >= 0 && position.getX() < width && position.getY() >= 0 && position.getY() < height;
     }
     public void moveHero(Position position){
         if(canHeroMove(position)){
