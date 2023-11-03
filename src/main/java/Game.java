@@ -42,6 +42,9 @@ public class Game {
             draw();
             KeyStroke key = screen.readInput();
             processKey(key);
+            if(!running){
+                screen.close();
+            }
         }
     }
 
